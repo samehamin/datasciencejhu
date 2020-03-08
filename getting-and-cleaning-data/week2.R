@@ -128,8 +128,67 @@ google = handle("http://google.com")
 pg1 = GET(handle = google, path = "/")
 pg1 = GET(handle = google, path = "search")
 
+# =========================================================================
 
 
+## Reading from APIs
+myapp = oauth_app("twitter", 
+                  key = "8omqHSHsQ4SpV8Ms3p0ARWD8r",
+                  secret = "BLYRvNNsz2NUSi2noyPbagcHWP3ycaoJ15KMTzgEbgIzHNky9E")
+
+sig = sign_oauth1.0(myapp, 
+                    token = "727768696073105408-FdkjBIqw0Ooib7ZQ8SfmWQ1Eo9s8K4O",
+                    token_secret = "DwshDowuwFwoVJ9kAtiN17ljtT7edbZjWR46P4pOipURl")
+
+homeTL = GET("https://api.twitter.com/1.1/statuses/home_timeline.json", sig)
+
+# converting the json
+json1 = content(homeTL)
+json2 = jsonlite::fromJSON(jsonlite::toJSON(json1))
+
+json2[1, 1:4]
+
+# =========================================================================
+
+
+## Week 2 Quiz
+library(httr)
+library(httpuv)
+library(jsonlite)
+
+
+githuburl = "http://api.github.com/users/jtleek/repos"
+appname = "datasciencejhu"
+appkey = "ba2337f28410327edbf7"
+appsecret = "367841afcb06b5ddb37fc2a9144cb0b7f5b6023f"
+# apptoken <- "c5f001cabfc6a6736248c89ff99083df21c5039d"
+
+# Can be github, linkedin etc depending on application
+oauth_endpoints("github")
+
+# Change based on what you 
+myapp <- oauth_app(appname = appname,
+                   key = appkey,
+                   secret = appsecret)
+
+# Get OAuth credentials
+github_token <- oauth2.0_token(oauth_endpoints("github"), myapp)
+
+# Use API
+gtoken <- config(token = github_token)
+req <- GET(githuburl, gtoken)
+
+# Take action on http error
+stop_for_status(req)
+
+# Extract content from a request
+json1 = content(req)
+
+# Convert to a data.frame
+gitDF = jsonlite::fromJSON(jsonlite::toJSON(json1))
+
+# Subset data.frame
+gitDF[gitDF$full_name == "jtleek/datasharing", "created_at"] 
 
 
 
