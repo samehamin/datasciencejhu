@@ -152,6 +152,8 @@ json2[1, 1:4]
 
 
 ## Week 2 Quiz
+
+# Question 1 - Github
 library(httr)
 library(httpuv)
 library(jsonlite)
@@ -191,4 +193,32 @@ gitDF = jsonlite::fromJSON(jsonlite::toJSON(json1))
 gitDF[gitDF$full_name == "jtleek/datasharing", "created_at"] 
 
 
+
+# Question 2
+download.file("https://d396qusza40orc.cloudfront.net/getdata%2Fdata%2Fss06pid.csv", "data/americansurvey.csv")
+
+acs <- read.csv("data/americansurvey.csv", header=T, sep=",")
+library("sqldf")
+sqldf("select pwgtp1 from acs where AGEP < 50")
+
+
+# Question 3
+sqldf("select distinct AGEP from acs")
+
+
+# Question 4
+library(XML)
+library(httr)
+
+hurl <- "http://biostat.jhsph.edu/~jleek/contact.html"
+con <- url(hurl)
+htmlcode <- readLines(con)
+close(con)
+sapply(htmlcode[c(10, 20, 30, 100)], nchar)
+
+
+# Question 5
+download.file("https://d396qusza40orc.cloudfront.net/getdata%2Fwksst8110.for", "data/kss8110.for")
+
+data <- read.csv("data/kss8110.for", header = TRUE)
 
