@@ -220,5 +220,8 @@ sapply(htmlcode[c(10, 20, 30, 100)], nchar)
 # Question 5
 download.file("https://d396qusza40orc.cloudfront.net/getdata%2Fwksst8110.for", "data/kss8110.for")
 
-data <- read.csv("data/kss8110.for", header = TRUE)
+df <- read.fwf(file="data/kss8110.for",widths=c(-1,9,-5,4,4,-5,4,4,-5,4,4,-5,4,4), skip=4)
+
+sum(df[, 4])
+
 
