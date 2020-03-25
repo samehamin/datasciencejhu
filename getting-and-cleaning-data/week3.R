@@ -177,3 +177,66 @@ ddply(InsectSprays, .(spray), summarize, sum=sum(count))
 spraySums <- ddply(InsectSprays, .(spray), summarize, sum=ave(count, FUN=sum))
 dim(spraySums)
 head(spraySums)
+
+
+# Managing Data Frames with dplyr - Basic Tools
+fileURL <- "https://github.com/DataScienceSpecialization/courses/blob/master/03_GettingData/dplyr/chicago.rds?raw=true"
+download.file(fileURL, destfile = "./data/chicago.rds", method = "curl", extra='-L')
+
+library(dplyr)
+options(width = 105)
+
+chicago <- readRDS("data/chicago.rds")
+dim(chicago)
+str(chicago)
+names(chicago)
+
+i <- match("city", names(chicago))
+j <- match("dptp", names(chicago))
+head(chicago[, -(i:j)])
+
+chic.f <- filter(chicago, pm25tmean2 > 30)
+head(chic.f, 10)
+
+#rename 
+chicago <- rename(chicago, pm25 = pm25tmean2, dewpoint = dptp)
+head(chicago)
+
+# create new vars
+chicago <- mutate(chicago, tempcat = factor(1 * (tmpd > 80), labels = c("cold", "hot")))
+tail(chicago)
+hotcold <- group_by(chicago, tempcat)
+head(hotcold)
+summarize(hotcold, pm25 = mean(pm25), o3 = max(o3tmean2), no2 = median(no2tmean2))
+
+
+# Merging Data
+# Peer review data
+# fileUrl1 = "https://dl.dropboxusercontent.com/u/7710864/data/reviews-apr29.csv"
+# fileUrl2 = "https://dl.dropboxusercontent.com/u/7710864/data/solutions-apr29.csv"
+# download.file(fileUrl1,destfile="./data/reviews.csv",method="curl")
+# download.file(fileUrl2,destfile="./data/solutions.csv",method="curl")
+reviews = read.csv("./data/reviews.csv")
+solutions <- read.csv("./data/solutions.csv")
+head(reviews,2)
+
+names(reviews)
+names(solutions)
+
+# Merge
+mergedData = merge(reviews, solutions, by.x = "solution_id", by.y = "id", all=TRUE)
+head(mergedData)
+
+# Intersect
+intersect(names(solutions), names(reviews))
+
+# dplyr join
+library(dplyr)
+options(width = 105)
+df1 = data.frame(id=sample(1:10), x=rnorm(10))
+df2 = data.frame(id=sample(1:10), y=rnorm(10))
+arrange(join(df1, df2), id)
+
+df3 = data.frame(id=sample(1:10), z=rnorm(10))
+dfList = list(df1, df2, df3)
+arrange(join_all(dfList), id)
